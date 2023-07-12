@@ -23,10 +23,10 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
 ## Gettting required api keys
+
 1. open ai api key obviously
-2. pinecone environment and api key
+2. pinecone environment and api key and make sure to create an index named book-index in there.
 3. adobe pdf services client id and secret.
-   
 
 ## Learn More
 
