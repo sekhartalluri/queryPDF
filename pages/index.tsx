@@ -27,6 +27,7 @@ export default function Home() {
   }, []);
 
   const submitQuery = async (query: string) => {
+    setAnswer("Fetching Ans...");
     const ans = await axios.post("/api/getanswer", { query: query });
     console.log("ans", ans.data.ans);
     setAnswer(ans.data.ans);
@@ -69,7 +70,15 @@ export default function Home() {
                 click
               </button>
             </div>
-            <p>{answer}</p>
+            {answer ? (
+              <div
+                className={
+                  answer === "Fetching Ans..." ? "bg-yellow-50" : "bg-green-50"
+                }
+              >
+                <p className="p-2 rounded-lg">{answer}</p>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
