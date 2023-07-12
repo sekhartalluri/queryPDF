@@ -28,6 +28,14 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 2. pinecone environment and api key and make sure to create an index named book-index in there.
 3. adobe pdf services client id and secret.
 
+make a .env file with these variables:
+
+ADOBE_CLIENT_ID
+ADOBE_CLIENT_SECRET
+OPENAI_API_KEY
+PINECONE_API_KEY
+PINECONE_ENV
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
