@@ -49,21 +49,28 @@ export default function Home() {
             <div className="border-2 p-3 rounded-xl">Upload</div>
             <input {...getInputProps()} />
           </div>
-          {res}
+          <div className="flex justify-center">{res}</div>
           {/* <div
             contentEditable
             className="w-[80%] h-10 rounded-xl mx-auto bg-white focus:outline-none border-2"
           ></div> */}
-          <input
-            className="border-2"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <button onClick={() => submitQuery(query)} className="w-10 h-10">
-            {" "}
-            click
-          </button>
-          <p>{answer}</p>
+          <div className="flex-col">
+            <div className="flex justify-center my-10">
+              <input
+                className="border-2"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <button
+                onClick={() => submitQuery(query)}
+                className="h-10 bg-slate-200 ml-2 p-2 rounded-md"
+              >
+                {" "}
+                click
+              </button>
+            </div>
+            <p>{answer}</p>
+          </div>
         </div>
       </div>
     </main>
