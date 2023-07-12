@@ -54,8 +54,8 @@ export default function handler(
     const INPUT_PDF = './public/file.pdf';
     const credentials =  PDFServicesSdk.Credentials
         .servicePrincipalCredentialsBuilder()
-        .withClientId("0733cd602eab48a08420fc2f0e1e2722")
-        .withClientSecret("p8e-YIiHiDOwBmHHW1ekOqDK4sZh6tcjHkjW")
+        .withClientId(process.env.ADOBE_CLIENT_ID)
+        .withClientSecret(process.env.ADOBE_CLIENT_SECRET)
         .build();
     const clientConfig = PDFServicesSdk.ClientConfig
         .clientConfigBuilder()

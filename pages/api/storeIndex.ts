@@ -11,40 +11,36 @@ const getVectors = async (inputBatch: RegExpMatchArray | null, openai: { createE
   let embeddings: any[] = [];
   return Promise.all((inputBatch ?? []).map(async (input,idx) => {
     const embeddingResult = await openai.createEmbedding({model: 'text-embedding-ada-002',input: input})
-    console.log(embeddingResult.data.data)
+
     embeddings.push(embeddingResult.data.data.map((entry: { embedding: any; }) => entry.embedding))
   return ({id: `${idx}`,metadata: {text: input}, values: embeddingResult.data.data.map((entry: { embedding: any; }) => entry.embedding)})
   }))
-  // return inputBatch?.map(async (input, idx) => {
-  //   // console.log("input", input)
-  //   const embeddingResult = await openai.createEmbedding({model: 'text-embedding-ada-002',input: input})
-  //   console.log(embeddingResult.data)
-  //   embeddings.push(embeddingResult.data.data.map((entry: { embedding: any; }) => entry.embedding))
-  //   return ({id: input,metadata: {name: idx}, values: embeddings[idx]})
-  // });
 
 }
 const initIndex = async (data : string) => {
-    const inputBatch = data.match(new RegExp('.{1,' + 3800 + '}', 'g'));
+    const inputBatch = data.match(new RegExp('.{1,' + 1000 + '}', 'g'));
     const configuration = new Configuration({
-      apiKey: "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",
+      apiKey: process.env.OPENAI_API_KEY,
   });
   const openai = new OpenAIApi(configuration);
     const pinecone = new PineconeClient();
     await pinecone.init({
-                environment: "northamerica-northeast1-gcp",
-                apiKey: "b9fd7835-5655-4a0d-9d53-c4dfec889702",
+                environment: process.env.PINECONE_ENV as string,
+                apiKey: process.env.PINECONE_API_KEY as string,
     });
 
   
     let embeddings: any[] = [];
     const vectors = await getVectors(inputBatch, openai)
     const index = pinecone.Index("book-index");
-    console.log("vecs",vectors);
+    const vectorBatches = Array.from({length : Math.ceil(vectors.length/250)}, (v, i) => vectors.slice(i*250, i*250+250));
+    
+    for(let i = 0; i < vectorBatches.length; i++){
+      const upsertResponse = await index.upsert({upsertRequest : {vectors:vectorBatches[i], namespace: "example-namespace"}});
+      console.log("resp", upsertResponse);
+    }
 
-    const upsertResponse = await index.upsert({upsertRequest : {vectors, namespace: "example-namespace"}})
-
-    console.log("resp", upsertResponse);
+    
 
 }
 
