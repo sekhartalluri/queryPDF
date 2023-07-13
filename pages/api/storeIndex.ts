@@ -18,7 +18,7 @@ const getVectors = async (inputBatch: RegExpMatchArray | null, openai: { createE
 
 }
 const initIndex = async (data : string) => {
-    const inputBatch = data.match(new RegExp('.{1,' + 1000 + '}', 'g'));
+    const inputBatch = data.match(new RegExp('.{1,' + 3800 + '}', 'g'));
     const configuration = new Configuration({
       apiKey: process.env.OPENAI_API_KEY,
   });
@@ -35,12 +35,12 @@ const initIndex = async (data : string) => {
     const index = pinecone.Index("book-index");
     const vectorBatches = Array.from({length : Math.ceil(vectors.length/250)}, (v, i) => vectors.slice(i*250, i*250+250));
     
-    for(let i = 0; i < vectorBatches.length; i++){
-      const upsertResponse = await index.upsert({upsertRequest : {vectors:vectorBatches[i], namespace: "example-namespace"}});
-      console.log("resp", upsertResponse);
-    }
-
-    
+    // for(let i = 0; i < vectorBatches.length; i++){
+    //   const upsertResponse = await index.upsert({upsertRequest : {vectors:vectorBatches[i], namespace: "example-namespace"}});
+    //   console.log("resp", upsertResponse);
+    // }
+    const upsertResponse = await index.upsert({upsertRequest : {vectors, namespace: "example-namespace"}});
+    console.log(upsertResponse)
 
 }
 
