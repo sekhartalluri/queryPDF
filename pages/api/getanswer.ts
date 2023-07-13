@@ -23,16 +23,18 @@ const getAns = async (query : string) => {
     const queryResponse = await index.query({
         queryRequest: {
           namespace: "example-namespace",
-          topK: 3,
+          topK: 1,
           includeMetadata: true,
           vector: embeddingResult.data.data.map((entry: { embedding: any; }) => entry.embedding),
         },
       });
-      const context = '';
-      queryResponse.matches?.map(resp => {
-        //@ts-ignore
-        context.concat(resp.metadata?.text as string)
-      })
+      //@ts-ignore
+      const context = queryResponse.matches[0].metadata.text;
+      console.log(context);
+      // queryResponse.matches?.map(resp => {
+      //   //@ts-ignore
+      //   context.concat(resp.metadata?.text as string)
+      // })
       const prompt = `
       Use only the given Data below to answer the given query if enough information is not provided don't assume things:
       Data
@@ -43,7 +45,6 @@ const getAns = async (query : string) => {
       ---
       ${query}
       ---
-      answer in not more than 50 words.
       `
       const answer = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
