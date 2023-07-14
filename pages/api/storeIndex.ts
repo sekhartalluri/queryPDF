@@ -33,8 +33,8 @@ const initIndex = async (data : string) => {
     let embeddings: any[] = [];
     const vectors = await getVectors(inputBatch, openai)
     const index = pinecone.Index("book-index");
-    const vectorBatches = Array.from({length : Math.ceil(vectors.length/250)}, (v, i) => vectors.slice(i*250, i*250+250));
-    
+    // const vectorBatches = Array.from({length : Math.ceil(vectors.length/25)}, (v, i) => vectors.slice(i*25, i*25+25));
+    // console.log(vectorBatches);
     // for(let i = 0; i < vectorBatches.length; i++){
     //   const upsertResponse = await index.upsert({upsertRequest : {vectors:vectorBatches[i], namespace: "example-namespace"}});
     //   console.log("resp", upsertResponse);

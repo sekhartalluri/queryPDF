@@ -9,39 +9,6 @@ type Data = {
   text: string
 }
 
-// const getText = async (extractPDFOperation: { execute: (arg0: any) => any; }, executionContext: any, OUTPUT_ZIP: any) => {
-//     const result = await extractPDFOperation.execute(executionContext);
-//     await result.saveAsFile(OUTPUT_ZIP);
-//     console.log('Successfully extracted information from PDF.');
-//     let zip = new AdmZip(OUTPUT_ZIP);
-//     let jsondata = zip.readAsText('structuredData.json');
-//         let data = JSON.parse(jsondata);
-//     let text = ""
-//     data.elements.forEach((element: { Path: string; Text: any; }) => {
-//         if(element.Path.endsWith('/H1')) {
-//             console.log(element.Text);
-//         }
-//         text += element.Text ?? " ";
-//     });
-
-//     const pinecone = new PineconeClient();
-//     await pinecone.init({
-//         environment: "northamerica-northeast1-gcp",
-//         apiKey: "b9fd7835-5655-4a0d-9d53-c4dfec889702",
-//     });
-
-//     await pinecone.createIndex({
-//         createRequest: {
-//           name: "example-index",
-//           dimension: 1024,
-//         },
-//     });
-
-
-
-//     return text;
-// }
-
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
@@ -91,7 +58,7 @@ export default function handler(
             }
             text += element.Text ?? " ";
         });
-        
+        fs.writeFileSync("outputadobe.txt", text)
         res.status(200).json({ text: text })
     })
     .catch((err:any) => res.status(200).json({ text: "text" }));
