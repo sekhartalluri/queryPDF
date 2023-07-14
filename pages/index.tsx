@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Inter } from "next/font/google";
 import { isAwaitKeyword } from "typescript";
 
@@ -21,9 +21,13 @@ export default function Home() {
     setRes("uploading file...");
     const status = await axios.post("/api/savePDF", formData);
     setRes("converting to text...");
-    const data = await axios.post("/api/PDFtoText");
+    // const data = await axios.post("/api/PDFtoText");
+    const data2 = await axios.post("/api/testApi");
+    console.log(data2.data.text);
+    // console.log("data", data);
+    // setRes("setting data...");
+    // await axios.post("/api/storeIndex", data2);
     setRes("done");
-    await axios.post("/api/storeIndex", data);
   }, []);
 
   const submitQuery = async (query: string) => {
