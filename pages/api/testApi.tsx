@@ -10,30 +10,44 @@ type Data = {
 
 const getVectors = async (
   inputBatch: RegExpMatchArray | null,
-  openai: { createEmbedding: (arg0: { model: string; input: any }) => any }
+  openai: { createEmbedding: (arg0: { model: string; input: any }) => any },
+  idx: number
 ) => {
   let embeddings: any[] = [];
-  return Promise.all(
-    (inputBatch ?? []).map(async (input, idx) => {
-      const embeddingResult = await openai.createEmbedding({
-        model: "text-embedding-ada-002",
-        input: input,
-      });
+  // return Promise.all(
+  //   (inputBatch ?? []).map(async (input, idx) => {
+  //     const embeddingResult = await openai.createEmbedding({
+  //       model: "text-embedding-ada-002",
+  //       input: input,
+  //     });
 
-      embeddings.push(
-        embeddingResult.data.data.map(
-          (entry: { embedding: any }) => entry.embedding
-        )
-      );
-      return {
-        id: `${idx}`,
-        metadata: { text: input },
-        values: embeddingResult.data.data.map(
-          (entry: { embedding: any }) => entry.embedding
-        ),
-      };
-    })
-  );
+  //     embeddings.push(
+  //       embeddingResult.data.data.map(
+  //         (entry: { embedding: any }) => entry.embedding
+  //       )
+  //     );
+  //     return {
+  //       id: `${idx}`,
+  //       metadata: { text: input },
+  //       values: embeddingResult.data.data.map(
+  //         (entry: { embedding: any }) => entry.embedding
+  //       ),
+  //     };
+  //   })
+  // );
+  const embeddingResult = await openai.createEmbedding({
+    model: "text-embedding-ada-002",
+    input: inputBatch,
+  });
+  return [
+    {
+      id: `${idx}`,
+      metadata: { text: inputBatch },
+      values: embeddingResult.data.data.map(
+        (entry: { embedding: any }) => entry.embedding
+      ),
+    },
+  ];
 };
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
@@ -56,7 +70,7 @@ export default async function handler(
     environment: process.env.PINECONE_ENV as string,
     apiKey: process.env.PINECONE_API_KEY as string,
   });
-
+  const index = pinecone.Index("book-index");
   const numPages = pdfDoc.numPages;
   let output = "";
   for (let i = 0; i < numPages; i++) {
@@ -64,13 +78,26 @@ export default async function handler(
     let textContent = await page.getTextContent();
     const text = textContent.items.map((item) => item.str).join("");
     output += text;
-    const inputBatch = text.match(new RegExp(".{1," + 3800 + "}", "g"));
-    console.log(inputBatch?.length);
-    const vectors = await getVectors(inputBatch, openai);
-    console.log(vectors.length);
-    const index = pinecone.Index("book-index");
+    // const inputBatch = text.match(new RegExp(".{1," + 3800 + "}", "g"));
+    // console.log(inputBatch?.length);
+
+    // console.log(vectors.length);
+
+    // const upsertResponse = await index.upsert({
+    //   upsertRequest: { vectors, namespace: "example-namespace" },
+    // });
+    // console.log(upsertResponse);
+  }
+
+  const inputBatch = output.match(new RegExp(".{1," + 3800 + "}", "g"));
+
+  for (let i = 0; i < inputBatch?.length ?? 0; i++) {
+    const vectors = await getVectors(inputBatch[i] ?? "", openai, i);
     const upsertResponse = await index.upsert({
-      upsertRequest: { vectors, namespace: "example-namespace" },
+      upsertRequest: {
+        vectors,
+        namespace: "example-namespace",
+      },
     });
     console.log(upsertResponse);
     await delay(20000);

@@ -45,7 +45,9 @@ const getAns = async (query : string) => {
       ---
       ${query}
       ---
+      Give your answers in markdown rather than plain text
       `
+      console.log("context",context)
       const answer = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         messages: [{role: "user", content: prompt}],

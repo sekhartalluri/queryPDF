@@ -4,7 +4,7 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Inter } from "next/font/google";
 import { isAwaitKeyword } from "typescript";
-
+import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
@@ -80,7 +80,9 @@ export default function Home() {
                   answer === "Fetching Ans..." ? "bg-yellow-50" : "bg-green-50"
                 }
               >
-                <p className="p-2 rounded-lg">{answer}</p>
+                <p className="p-2 rounded-lg">
+                  <ReactMarkdown>{answer}</ReactMarkdown>
+                </p>
               </div>
             ) : null}
           </div>
